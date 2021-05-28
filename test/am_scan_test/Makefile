@@ -19,8 +19,8 @@ SRC_FILES = am_scan_test.c
 
 CFLAGS   := -c -Wall -Wno-unknown-pragmas -Wno-format -O3 -fexceptions -fnon-call-exceptions
 
-CFLAGS += $(LOCAL_C_INCLUDES) $(DEFINES)
-LDFLAGS  := -L$(TARGET_DIR)/usr/lib -lam_adp -lamadec -lam_mw -lamavutils -lsqlite3 -lzvbi
+CFLAGS += $(LOCAL_C_INCLUDES) $(DEFINES) -Wno-error=format-security
+LDFLAGS  := -L$(TARGET_DIR)/usr/lib -lam_adp -lamadec -lam_mw -lamavutils -lsqlite3 -lzvbi -lasound
 
 all : $(OBJS) $(OUTPUT)
 

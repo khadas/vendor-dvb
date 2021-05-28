@@ -17,11 +17,8 @@ LOCAL_C_INCLUDES := -I $(LOCAL_PATH)/../include/am_adp\
 
 SRC_FILES = $(wildcard am_dmx/*.c am_dmx/linux_dvb/*.c \
 			am_fend/*.c am_fend/linux_dvb/*.c am_fend/linux_v4l2/*.c\
-			am_av/*.c am_av/aml/*.c\
 	        am_dvr/*.c am_dvr/linux_dvb/*.c\
 	        am_dmx/dvr/*.c\
-	        am_aout/*.c\
-	        am_vout/*.c am_vout/aml/*.c\
 	        am_misc/am_adplock.c am_misc/am_misc.c am_misc/am_sig_handler.c\
 	        am_time/*.c\
 	        am_evt/*.c\
@@ -43,9 +40,9 @@ SRC_FILES = $(wildcard am_dmx/*.c am_dmx/linux_dvb/*.c \
 		    am_open_lib/am_freesat/freesat.c \
 		    am_tfile/am_tfile.c)
 
-CFLAGS   := -c -Wall -shared -fPIC -Wno-unknown-pragmas -Wno-format -O3 -fexceptions -fnon-call-exceptions -DUSE_ADEC_IN_DVB -DCHIP_8226M
+CFLAGS   := -c -Wall -shared -fPIC -Wno-unknown-pragmas -Wno-format -O3 -fexceptions -fnon-call-exceptions -DCHIP_8226M
 
-CFLAGS += $(LOCAL_C_INCLUDES) $(DEFINES)
+CFLAGS += $(LOCAL_C_INCLUDES) $(DEFINES) -Wno-error=format-security
 LDFLAGS  := -shared -fPIC -L$(TARGET_DIR)/usr/lib -lamadec
 
 all : $(OBJS) $(OUTPUT)
