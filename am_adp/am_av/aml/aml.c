@@ -139,7 +139,6 @@ void *adec_handle = NULL;
 #define TSYNCPCR_RESETFLAG_FILE "/sys/class/tsync_pcr/tsync_pcr_reset_flag"
 #define DI_BYPASS_ALL_FILE "/sys/module/di/parameters/bypass_all"
 #define DVB_STB_DEMUXSOURCE_FILE "/sys/class/stb/demux%d_source"
-#define DVB_STB_ASYNCFIFO_FLUSHSIZE_FILE "/sys/class/stb/asyncfifo0_flush_size"
 #define TSYNC_ENABLE_FILE "/sys/class/tsync/enable"
 #define VIDEO_SHOW_FIRSTFRM_NOSYNC_FILE "/sys/class/video/show_first_frame_nosync"
 
@@ -203,7 +202,6 @@ void *adec_handle = NULL;
 #define TSYNCPCR_RESETFLAG_FILE "/sys/class/tsync_pcr/tsync_pcr_reset_flag"
 #define DI_BYPASS_ALL_FILE "/sys/module/di/parameters/bypass_all"
 #define DVB_STB_DEMUXSOURCE_FILE "/sys/class/stb/demux%d_source"
-#define DVB_STB_ASYNCFIFO_FLUSHSIZE_FILE "/sys/class/stb/asyncfifo0_flush_size"
 #define TSYNC_ENABLE_FILE "/sys/class/tsync/enable"
 #define VIDEO_SHOW_FIRSTFRM_NOSYNC_FILE "/sys/class/video/show_first_frame_nosync"
 
@@ -2704,8 +2702,6 @@ static AM_ErrorCode_t aml_start_timeshift(AV_TimeshiftData_t *tshift, AV_TimeShi
                 snprintf(buf, sizeof(buf), "%d", 256*1024);
         else
 #endif
-	snprintf(buf, sizeof(buf), "%d", 32*1024);
-	AM_FileEcho(DVB_STB_ASYNCFIFO_FLUSHSIZE_FILE, buf);
 
 	if (check_vfmt_support_sched(tp->vfmt) == AM_FALSE)
 	{
