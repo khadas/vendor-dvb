@@ -54,8 +54,6 @@
 /**\brief 定时录像即将开始时，提前通知用户的间隔*/
 #define REC_NOTIFY_RECORD_TIME	(60 * 1000)
 
-#define DVB_STB_ASYNCFIFO_FLUSHSIZE_FILE "/sys/class/stb/asyncfifo0_flush_size"
-
 /****************************************************************************
  * Type definitions
  ***************************************************************************/
@@ -493,7 +491,17 @@ static void *am_rec_record_thread(void* arg)
 	}
 
 	AM_DVR_SetSource(rec->create_para.dvr_dev, rec->create_para.async_fifo_id);
-	
+
+	char node_val[64];
+	char node[128];
+#ifdef SUPPORT_CAS
+	snprintf(node_val, sizeof(node_val), "%d", 256*1024);
+#else
+	snprintf(node_val, sizeof(node_val), "%d", 32*1024);
+#endif
+	snprintf(node, sizeof(node), "/sys/class/stb/asyncfifo%d_flush_size", rec->create_para.async_fifo_id);
+	AM_FileEcho(node, node_val);
+
 	if (am_rec_start_dvr(rec) != AM_SUCCESS)
 	{
 		AM_DEBUG(0, "Start DVR%d failed", rec->create_para.dvr_dev);
@@ -860,15 +868,6 @@ static int am_rec_start_record(AM_REC_Recorder_t *rec, AM_REC_RecPara_t *start_p
 			ret = AM_REC_ERR_CANNOT_OPEN_FILE;
 			goto start_end;
 		}
-
-		char buf[64];
-#ifdef SUPPORT_CAS
-		snprintf(buf, sizeof(buf), "%d", 256*1024);
-#else
-		snprintf(buf, sizeof(buf), "%d", 32*1024);
-#endif
-
-		AM_FileEcho(DVB_STB_ASYNCFIFO_FLUSHSIZE_FILE, buf);
 
 		am_rec_insert_file_header(rec);
 		am_rec_insert_pat(rec);
