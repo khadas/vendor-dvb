@@ -2104,7 +2104,7 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 		AM_SI_LIST_END()
 	}
 
-	if (afmt_tmp != -1)
+	if (afmt_tmp != -1 && afmt_tmp != AFORMAT_DTS)
 	{
 		AM_SI_LIST_BEGIN(es->p_first_descriptor, descr)
 			if (descr->i_tag == AM_SI_DESCR_ISO639 && descr->p_decoded != NULL)
