@@ -103,7 +103,7 @@ AM_ErrorCode_t AM_EVT_Subscribe(long dev_no, int event_type, AM_EVT_Callback_t c
         //--如果使用dev_no过滤,那就会有可能会有少量内存浪费,如果不使用,但dev_no又是动态的(handle),fk
         if(evt->dev_no == dev_no && evt->cb == cb && evt->type == event_type)
         {
-            AM_DEBUG(1, "the same cb set");
+            //AM_DEBUG(1, "the same cb set");
             pthread_rwlock_unlock(&rwlock);
             return AM_SUCCESS;
         }

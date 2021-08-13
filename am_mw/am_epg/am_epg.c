@@ -3462,7 +3462,7 @@ static void am_epg_set_mode(AM_EPG_Monitor_t *mon, AM_Bool_t reset)
 {
 	int i;
 	
-	AM_DEBUG(1, "EPG Setmode 0x%x, reset:%d", mon->mode, reset);
+	//AM_DEBUG(1, "EPG Setmode 0x%x, reset:%d", mon->mode, reset);
 
 	if (mon->mode & AM_EPG_SCAN_PSIP_EIT_VERSION_CHANGE && (!(mon->mode & AM_EPG_SCAN_PSIP_EIT))) {
 		for (i=0; i<mon->psip_eit_count; i++)

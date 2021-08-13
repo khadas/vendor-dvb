@@ -1544,7 +1544,7 @@ AM_ErrorCode_t AM_SI_GetDVBTextCodingAndData(char *in, int in_len, char *coding,
 
 	if (!in || in_len <= 0
 			|| !coding || !coding_len || !offset) {
-		AM_DEBUG(1,"%s : bad param\n", __FUNCTION__);
+		//AM_DEBUG(1,"%s : bad param\n", __FUNCTION__);
 		return AM_FAILURE;
 	}
 
@@ -1615,7 +1615,7 @@ AM_ErrorCode_t AM_SI_GetDVBTextCodingAndData(char *in, int in_len, char *coding,
 AM_ErrorCode_t AM_SI_ConvertToUTF8(char *in, int in_len, char *out, int out_len, char *coding)
 {
 	if (!in || !out || in_len <= 0 || out_len <= 0 || !coding) {
-		AM_DEBUG(1,"%s : bad param\n", __FUNCTION__);
+		//AM_DEBUG(1,"%s : bad param\n", __FUNCTION__);
 		return AM_FAILURE;
 	}
 
