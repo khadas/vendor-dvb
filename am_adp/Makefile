@@ -13,6 +13,7 @@ LOCAL_C_INCLUDES := -I $(LOCAL_PATH)/../include/am_adp\
 		    -I$(LOCAL_PATH)/am_open_lib/am_ci\
 		    -I$(LOCAL_PATH)/../include/am_mw\
 		    -I$(LOCAL_PATH)/../android/ndk/include\
+		    -I$(LOCAL_PATH)/../android/ndk/include/linux\
 			-I$(LOCAL_PATH)/am_fend
 
 SRC_FILES = $(wildcard am_dmx/*.c am_dmx/linux_dvb/*.c \
@@ -43,7 +44,7 @@ SRC_FILES = $(wildcard am_dmx/*.c am_dmx/linux_dvb/*.c \
 CFLAGS   := -c -Wall -shared -fPIC -Wno-unknown-pragmas -Wno-format -O3 -fexceptions -fnon-call-exceptions -DCHIP_8226M
 
 CFLAGS += $(LOCAL_C_INCLUDES) $(DEFINES) -Wno-error=format-security
-LDFLAGS  := -shared -fPIC -L$(TARGET_DIR)/usr/lib -lamadec
+LDFLAGS  := -shared -fPIC -L$(TARGET_DIR)/usr/lib
 
 all : $(OBJS) $(OUTPUT)
 
