@@ -13,7 +13,6 @@ LOCAL_C_INCLUDES := -I $(LOCAL_PATH)/../include/am_adp\
 		    -I $(LOCAL_PATH)/../include/am_adp/libdvbsi/tables\
 		    -I $(LOCAL_PATH)/am_closecaption/am_vbi\
 		    -I $(LOCAL_PATH)/../android/ndk/include\
-		    -I $(LOCAL_PATH)/../android/ndk/include/linux\
 		    -I $(LOCAL_PATH)/../am_adp/am_open_lib/am_ci
 
 #$(LOCAL_PATH)/../../libzvbi/src\
@@ -39,8 +38,7 @@ SRC_FILES = $(wildcard am_db/*.c\
 CFLAGS   := -c -Wall -shared -fPIC -Wno-unknown-pragmas -Wno-format -O3 -fexceptions -fnon-call-exceptions
 
 CFLAGS += $(LOCAL_C_INCLUDES) $(DEFINES) -Wno-error=format-security
-LDFLAGS  := -shared -fPIC -L$(USING_LIBS_PATH) -L$(INSTALL_DIR) -lzvbi -lam_adp -lsqlite3
-LDFLAGS += -L${STAGING_DIR}/usr/lib
+LDFLAGS  := -shared -fPIC -L$(USING_LIBS_PATH) -L$(INSTALL_DIR) -lzvbi -lam_adp -lsqlite3 -lamadec
 
 all : $(OBJS) $(OUTPUT)
 
