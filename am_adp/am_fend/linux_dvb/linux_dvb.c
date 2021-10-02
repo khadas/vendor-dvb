@@ -736,9 +736,9 @@ static AM_ErrorCode_t dvb_get_ber (AM_FEND_Device_t *dev, int *ber)
 static AM_ErrorCode_t dvb_get_strength (AM_FEND_Device_t *dev, int *strength)
 {
 	int fd = (long)dev->drv_data;
-	uint16_t v16;
+	int16_t v16;
 
-	if(ioctl(fd, FE_READ_SIGNAL_STRENGTH, &v16)==-1)
+	if(ioctl(fd, FE_READ_SIGNAL_STRENGTH, (uint16_t *)&v16) == -1)
 	{
 		AM_DEBUG(1, "ioctl FE_READ_SIGNAL_STRENGTH failed, error:%s", strerror(errno));
 		return AM_FAILURE;
