@@ -217,7 +217,7 @@ enum vbi_state_e {
 	VBI_STATE_GO        = 3,
 	VBI_STATE_DONE      = 4,
 	VBI_STATE_TIMEDOUT  = 5
-} vbi_state_t;
+};
 
 /* ********************
 ************************** */
