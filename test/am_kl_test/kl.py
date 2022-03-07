@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-#Python 2.7.6
+#!/usr/bin/env python3
+
 from Crypto.Cipher import AES, DES3
 import binascii
 #============================================
@@ -28,7 +28,7 @@ def h(x,s=" "):
 #performs xor on two strings of the same length
 def XOR(a,b):
     if len(a) != len(b):
-        print 'XOR received strings of unequal length'
+        print('XOR received strings of unequal length')
 
     result = ''.join([chr(ord(a[i]) ^ ord(b[i])) for i in range(len(a))])
     return result
@@ -110,28 +110,28 @@ def BasicCR(algoD, K3):
 #Functions for pretty printing the vectors
 #============================================
 def prettyPrintKLADKeys(kdKeys,derivation):
-    print 'Key Derivation Name: %s' % derivation['name']
-    print 'SCK : %s' % h(SCK)
-    print 'Mask Key : %s' % h(MASK_KEY)
-    print 'VID : %s' % h(VENDOR_ID)
+    print('Key Derivation Name: %s' % derivation['name'])
+    print('SCK : %s' % h(SCK))
+    print('Mask Key : %s' % h(MASK_KEY))
+    print('VID : %s' % h(VENDOR_ID))
     #print 'Padded VID : %s' % h(derivation['vidPad'](VENDOR_ID))
     #print 'SCKv : %s' % h(kdKeys['SCKv'])
     #print 'Seedv : %s' % h(kdKeys['Seedv'])
     #check to see if there's a Modv key
     if 'Modv' in kdKeys:
-        print 'MID : %s' % h(MODULE_ID)
+        print('MID : %s' % h(MODULE_ID))
         #print 'Padded MID : %s' % h(derivation['midPad'](MODULE_ID))
         #print 'Modv : %s' % h(kdKeys['Modv'])
-    print 'K3 : %s' % h(kdKeys['K3'])
+    print('K3 : %s' % h(kdKeys['K3']))
 
 def prettyPrintCRKeys(crKeys, klad):
-    print 'C/R Algo : %s' % klad['name']
+    print('C/R Algo : %s' % klad['name'])
     #print 'K3 : %s' % h(crKeys['K3'])
-    print 'EK2 : %s' % h(EK2)
+    print('EK2 : %s' % h(EK2))
     #print 'K2 : %s' % h(crKeys['K2'])
-    print 'A : %s' % h(crKeys['A'])
-    print 'nonce : %s' % h(NONCE)
-    print 'dnonce : %s' % h(crKeys['dnonce'])
+    print('A : %s' % h(crKeys['A']))
+    print('nonce : %s' % h(NONCE))
+    print('dnonce : %s' % h(crKeys['dnonce']))
 
 #============================================
 #These items describe the various key derivation/klad combinations we'll perform
