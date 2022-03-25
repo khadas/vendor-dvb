@@ -22,7 +22,7 @@
 #ifndef AFORMAT_H
 #define AFORMAT_H
 
-typedef enum {
+typedef enum aformat_e {
     AFORMAT_MPEG   = 0,
     AFORMAT_PCM_S16LE = 1,
     AFORMAT_AAC   = 2,

@@ -22,7 +22,7 @@
 #ifndef VFORMAT_H
 #define VFORMAT_H
 
-typedef enum {
+typedef enum vformat_e {
     VFORMAT_MPEG12 = 0,
     VFORMAT_MPEG4,
     VFORMAT_H264,

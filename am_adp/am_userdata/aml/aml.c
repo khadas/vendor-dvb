@@ -23,6 +23,7 @@
 #include "../am_userdata_internal.h"
 #include <fcntl.h>
 #include <unistd.h>
+#include <strings.h>
 #include <string.h>
 #include <errno.h>
 #include <poll.h>

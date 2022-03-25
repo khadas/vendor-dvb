@@ -21,7 +21,7 @@
 #include <am_debug.h>
 #include <am_mem.h>
 #include "am_osd_internal.h"
-#include <amports/amstream.h>
+#include <linux/amports/amstream.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
