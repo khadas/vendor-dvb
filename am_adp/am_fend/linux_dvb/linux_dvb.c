@@ -471,6 +471,7 @@ static AM_ErrorCode_t dvb_set_para (AM_FEND_Device_t *dev, const struct dvb_fron
 			case BANDWIDTH_AUTO:
 				p[cmd_num].u.data = 0;
 			}
+			cmd_num++;
 			break;
 		/*now don't support below
 		case SYS_DSS:
