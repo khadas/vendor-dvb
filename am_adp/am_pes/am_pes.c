@@ -34,7 +34,7 @@
 #include <am_debug.h>
 #include <am_pes.h>
 #include <am_util.h>
-#include <linux/amports/aformat.h>
+#include <amports/aformat.h>
 
 typedef struct
 {

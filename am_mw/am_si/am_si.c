@@ -30,8 +30,7 @@
 #include "am_misc.h"
 #include <errno.h>
 #include <freesat.h>
-#include <linux/amports/vformat.h>
-#include <cutils/properties.h>
+#include <amports/vformat.h>
 
 /****************************************************************************
  * Macro definitions

@@ -36,7 +36,7 @@
 #include <poll.h>
 #include <errno.h>
 #include <signal.h>
-#include <linux/amports/amstream.h>
+#include <amports/amstream.h>
 #ifdef ANDROID
 #include <cutils/properties.h>
 #endif
@@ -2232,15 +2232,15 @@ static AM_ErrorCode_t aml_start_inject(AM_AV_Device_t *dev, AV_InjectData_t *inj
 		}
 		else if (para->vid_fmt == VFORMAT_AVS)
 		{
-			/*am_sysinfo.format = VIDEO_DEC_FORMAT_AVS;
-			am_sysinfo.width  = 1920;
+			am_sysinfo.format = VIDEO_DEC_FORMAT_AVS;
+			/*am_sysinfo.width  = 1920;
 			am_sysinfo.height = 1080;*/
 		}
 		else if (para->vid_fmt == VFORMAT_HEVC)
 		{
-			/*am_sysinfo.format = VIDEO_DEC_FORMAT_HEVC;
+			am_sysinfo.format = VIDEO_DEC_FORMAT_HEVC;
 			am_sysinfo.width  = 3840;
-			am_sysinfo.height = 2160;*/
+			am_sysinfo.height = 2160;
 		}
 
 		if (ioctl(vfd, AMSTREAM_IOC_SYSINFO, (unsigned long)&am_sysinfo) == -1)
@@ -2792,15 +2792,15 @@ static AM_ErrorCode_t aml_start_timeshift(AV_TimeshiftData_t *tshift, AV_TimeShi
 		}
 		else if (tp->vfmt == VFORMAT_AVS)
 		{
-			/*am_sysinfo.format = VIDEO_DEC_FORMAT_AVS;
-			am_sysinfo.width  = 1920;
+			am_sysinfo.format = VIDEO_DEC_FORMAT_AVS;
+			/*am_sysinfo.width  = 1920;
 			am_sysinfo.height = 1080;*/
 		}
 		else if (tp->vfmt == VFORMAT_HEVC)
 		{
-			/*am_sysinfo.format = VIDEO_DEC_FORMAT_HEVC;
+			am_sysinfo.format = VIDEO_DEC_FORMAT_HEVC;
 			am_sysinfo.width  = 3840;
-			am_sysinfo.height = 2160;*/
+			am_sysinfo.height = 2160;
 		}
 
 		if (ioctl(ts->fd, AMSTREAM_IOC_SYSINFO, (unsigned long)&am_sysinfo) == -1)
@@ -4924,15 +4924,15 @@ static AM_ErrorCode_t aml_start_ts_mode(AM_AV_Device_t *dev, AV_TSPlayPara_t *tp
 		}
 		else if (tp->vfmt == VFORMAT_AVS)
 		{
-			/*am_sysinfo.format = VIDEO_DEC_FORMAT_AVS;
-			am_sysinfo.width  = 1920;
+			am_sysinfo.format = VIDEO_DEC_FORMAT_AVS;
+			/*am_sysinfo.width  = 1920;
 			am_sysinfo.height = 1080;*/
 		}
 		else if (tp->vfmt == VFORMAT_HEVC)
 		{
-			/*am_sysinfo.format = VIDEO_DEC_FORMAT_HEVC;
+			am_sysinfo.format = VIDEO_DEC_FORMAT_HEVC;
 			am_sysinfo.width  = 3840;
-			am_sysinfo.height = 2160;*/
+			am_sysinfo.height = 2160;
 		}
 
 		if (ioctl(ts->fd, AMSTREAM_IOC_SYSINFO, (unsigned long)&am_sysinfo) == -1)

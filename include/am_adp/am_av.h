@@ -39,8 +39,8 @@
 #include "am_tfile.h"
 #include "am_userdata.h"
 #include "am_crypt.h"
-#include <linux/amports/vformat.h>
-#include <linux/amports/aformat.h>
+#include <amports/vformat.h>
+#include <amports/aformat.h>
 
 #ifdef __cplusplus
 extern "C"
