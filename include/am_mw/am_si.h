@@ -253,6 +253,7 @@ typedef struct
 												31:24 bit: exten type,the value is enum AM_Audio_Exten vaue
 												23:16:mainid or asvc id,8 bit
 												15:0 bit:no use*/
+		int		presel_id;	/**< AC4 audio preselection id*/
 	}audios[AM_SI_MAX_AUD_CNT];/**<audio info*/
 }AM_SI_AudioInfo_t;
 

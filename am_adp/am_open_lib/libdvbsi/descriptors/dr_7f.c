@@ -50,8 +50,8 @@ int dvbpsi_Decode_Exten_Sup_Audio_Dr(dvbpsi_EXTENTION_dr_t * p_decoded, uint8_t 
 {
     AM_DEBUG(1, "dr_7f dvbpsi_Decode_Exten_Sup_Audio_Dr ");
   /*1 5 1 1 8bit mix:1 edit:5 re:1 lang:1*/
-  p_decoded->exten_t.sup_audio.mix_type = (p_data[1]&0x80)>7; /*1000 0000*/
-  p_decoded->exten_t.sup_audio.editorial_classification = (p_data[1]&0x7C)>2; /*0111 1100*/
+  p_decoded->exten_t.sup_audio.mix_type = (p_data[1]&0x80)>>7; /*1000 0000*/
+  p_decoded->exten_t.sup_audio.editorial_classification = (p_data[1]&0x7C)>>2; /*0111 1100*/
   p_decoded->exten_t.sup_audio.lang_code = p_data[1]&0x01; /*0000 0001*/
   if (p_decoded->exten_t.sup_audio.lang_code == 1 && i_length >= 5) {
     p_decoded->exten_t.sup_audio.iso_639_lang_code[0] = p_data[2];
@@ -75,6 +75,55 @@ int dvbpsi_Decode_Exten_AC4_Audio_Dr(dvbpsi_EXTENTION_dr_t * p_decoded, uint8_t 
 	p_decoded->exten_t.ac4_audio.ac4_toc_flag = p_data[1]; /*0111 1100*/
 	return 0;
 }
+
+/*****************************************************************************
+ * dvbpsi_Decode_Exten_AC4_Audio_Dr
+ *****************************************************************************/
+int dvbpsi_Decode_Exten_Audio_Preselection_Dr(dvbpsi_EXTENTION_dr_t * p_decoded, uint8_t * p_data, uint8_t i_length)
+{
+	AM_DEBUG(1, "dr_7f dvbpsi_Decode_Exten_Audio_Preselection_Dr ");
+	dvbpsi_EXTENTION_audio_preselection_t* ap = &p_decoded->exten_t.audio_preselection;
+	ap->num_preselections = (p_data[1]&0xF8)>>3; /*1111 1000*/
+	ap->reserved_zero_future_use = (p_data[1]&0x07); /*0000 0111*/
+	if (ap->num_preselections <= 0)
+	{
+		return 0;
+	}
+	uint8_t* data = p_data+2;
+	for (int i=0;i<ap->num_preselections;i++)
+	{
+		dvbpsi_EXTENTION_preselection_t* ps_i = &ap->preselections[i];
+		int extra=0;
+		ps_i->preselection_id = (data[0]&0xF8)>>3;
+		ps_i->audio_rendering_indication = (data[0]&0x07);
+		ps_i->audio_description = (data[1]&0x80)>>7;
+		ps_i->spoken_subtitle = (data[1]&0x40)>>6;
+		ps_i->dialogue_enhancement = (data[1]&0x20)>>5;
+		ps_i->interactivity_enabled = (data[1]&0x10)>>4;
+		ps_i->language_code_present = (data[1]&0x08)>>3;
+		ps_i->text_label_present = (data[1]&0x04)>>2;
+		ps_i->multi_stream_info_present = (data[1]&0x02)>>1;
+		ps_i->future_extension = (data[1]&0x01);
+		if (ps_i->language_code_present)
+		{
+			strncpy(ps_i->iso_639_language_code,data+2,3);
+			extra+=3;
+		}
+		ps_i->message_id=0;
+		if (ps_i->text_label_present)
+		{
+			ps_i->message_id = data[2+extra];
+			extra+=1;
+		}
+		AM_DEBUG(1, "dr_7f data:%p, preselection id:%d, lang:%c%c%c, msg_id:%d",
+				data,(int)(ps_i->preselection_id),
+				ps_i->iso_639_language_code[0], ps_i->iso_639_language_code[1],
+				ps_i->iso_639_language_code[2], (int)(ps_i->message_id));
+		data += (2+extra);
+	}
+	return 0;
+}
+
 /*****************************************************************************
  * dvbpsi_DecodeEXTENTIONDr
  *****************************************************************************/
@@ -174,8 +223,10 @@ dvbpsi_EXTENTION_dr_t * dvbpsi_DecodeEXTENTIONDr(dvbpsi_descriptor_t * p_descrip
       AM_DEBUG(1, "dr_7f exten tag AM_SI_EXTEN_DESCR_AC4 ");
       dvbpsi_Decode_Exten_AC4_Audio_Dr(p_decoded, p_descriptor->p_data, p_descriptor->i_length);
       break;
-    case AM_DI_EXTEN_DESCR_AUDIO_PRESELECTION:
-      AM_DEBUG(1, "dr_7f exten tag AM_DI_EXTEN_DESCR_AUDIO_PRESELECTION ");
+    case AM_SI_EXTEN_DESCR_AUDIO_PRESELECTION:
+      AM_DEBUG(1, "dr_7f exten tag AM_SI_EXTEN_DESCR_AUDIO_PRESELECTION ");
+      dvbpsi_Decode_Exten_Audio_Preselection_Dr(
+          p_decoded, p_descriptor->p_data, p_descriptor->i_length);
       break;
     case AM_SI_EXTEN_DESCR_OTHER:
       AM_DEBUG(1, "dr_7f exten tag AM_SI_EXTEN_DESCR_OTHER ");

@@ -1132,7 +1132,7 @@ iso6937_end:
     return -1;
 }
 
-static void si_add_audio(AM_SI_AudioInfo_t *ai, int aud_pid, int aud_fmt, char lang[3],int audio_type,int audio_exten)
+static void si_add_audio(AM_SI_AudioInfo_t *ai, int aud_pid, int aud_fmt, char lang[3],int audio_type,int audio_exten, int presel_id)
 {
 	int i, j;
 	int i_exten = 0, sub_id;
@@ -1144,6 +1144,7 @@ static void si_add_audio(AM_SI_AudioInfo_t *ai, int aud_pid, int aud_fmt, char l
 	{
 		if (ai->audios[i].pid == aud_pid &&
 			ai->audios[i].fmt == aud_fmt &&
+			ai->audios[i].presel_id == presel_id &&
 			! memcmp(ai->audios[i].lang, lang, 3))
 		{
 			if ((strncmp(ai->audios[i].lang, "Audio", 5) == 0) && lang[0] != 0) {
@@ -1166,6 +1167,7 @@ static void si_add_audio(AM_SI_AudioInfo_t *ai, int aud_pid, int aud_fmt, char l
 
 	ai->audios[ai->audio_count].pid = aud_pid;
 	ai->audios[ai->audio_count].fmt = aud_fmt;
+	ai->audios[ai->audio_count].presel_id = presel_id;
 	ai->audios[ai->audio_count].audio_type = audio_type;
 	/*set audio exten flag*/
 	if (aud_fmt == AFORMAT_AC3 || aud_fmt == AFORMAT_EAC3) {
@@ -1194,7 +1196,10 @@ static void si_add_audio(AM_SI_AudioInfo_t *ai, int aud_pid, int aud_fmt, char l
 		snprintf(ai->audios[ai->audio_count].lang, sizeof(ai->audios[ai->audio_count].lang), "Audio%d", ai->audio_count+1);
 	}
 
-	AM_DEBUG(1, "---Add a audio: pid %d, fmt %d, language: %s ,audio_type:%d, audio_exten:0x%x", aud_pid, aud_fmt, ai->audios[ai->audio_count].lang,audio_type,audio_exten);
+	AM_DEBUG(1, "---Add a audio: pid %d, fmt %d, language: %s ,audio_type:%d, audio_exten:0x%x"
+			", preselection_id:%d",
+			aud_pid, aud_fmt, ai->audios[ai->audio_count].lang,audio_type,audio_exten,
+			ai->audios[ai->audio_count].presel_id);
 	ai->audio_count++;
 	/*ad sub audio exten when fmt is not ac3*/
 	for (i=0; i<ai->audio_count; i++)
@@ -2098,7 +2103,19 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 				{
 					AM_DEBUG(1, "!!Found AC4 Descriptor!!!");
 					afmt_tmp = 29;
-					break;
+				}
+				else if (pisod->i_extern_des_tag == AM_SI_EXTEN_DESCR_AUDIO_PRESELECTION)
+				{
+					AM_DEBUG(1, "!!Found AC4 Audio Preselection Descriptor!!!");
+					dvbpsi_EXTENTION_audio_preselection_t* ap = &pisod->exten_t.audio_preselection;
+					afmt_tmp = 29;
+					for (int i=0;i<ap->num_preselections;i++)
+					{
+						int id = ap->preselections[i].preselection_id;
+						si_add_audio(aud_info, es->i_pid, afmt_tmp,
+								ap->preselections[i].iso_639_language_code,
+								audio_type, audio_exten, id);
+					}
 				}
 			}
 		AM_SI_LIST_END()
@@ -2106,6 +2123,7 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 
 	if (afmt_tmp != -1 && afmt_tmp != AFORMAT_DTS)
 	{
+		AM_Bool_t hit = false;
 		AM_SI_LIST_BEGIN(es->p_first_descriptor, descr)
 			if (descr->i_tag == AM_SI_DESCR_ISO639 && descr->p_decoded != NULL)
 			{
@@ -2114,6 +2132,7 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 				{
 					memcpy(lang_tmp, pisod->code[0].iso_639_code, sizeof(lang_tmp));
 					audio_type = pisod->code[0].i_audio_type;
+					hit = true;
 					break;
 				}
 			}
@@ -2130,12 +2149,16 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 					}
 					audio_type = pisod->exten_t.sup_audio.editorial_classification;
 					AM_DEBUG(1, "audio type : %d lang:%s", audio_type, lang_tmp);
+					hit = true;
 					break;
 				}
 			}
 		AM_SI_LIST_END()
-		/* Add a audio */
-		si_add_audio(aud_info, es->i_pid, afmt_tmp, lang_tmp, audio_type, audio_exten);
+		if (hit)
+		{
+			/* Add a audio */
+			si_add_audio(aud_info, es->i_pid, afmt_tmp, lang_tmp, audio_type, audio_exten, -1);
+		}
 	}
 
 	return AM_SUCCESS;
@@ -2193,7 +2216,7 @@ AM_ErrorCode_t AM_SI_ExtractAVFromATSCVC(vct_channel_info_t *vcinfo, int *vid, i
 				{
 					memcpy(lang_tmp, asld->elem[i].iso_639_code, sizeof(lang_tmp));
 					audio_type = asld->elem[i].i_audio_type;
-					si_add_audio(aud_info, asld->elem[i].i_pid, afmt_tmp, lang_tmp,audio_type,audio_exten);
+					si_add_audio(aud_info, asld->elem[i].i_pid, afmt_tmp, lang_tmp,audio_type,audio_exten,-1);
 				}
 			}
 		}
@@ -2244,7 +2267,7 @@ AM_ErrorCode_t AM_SI_ExtractAVFromVC(dvbpsi_atsc_vct_channel_t *vcinfo, int *vid
 				if (afmt_tmp != -1)
 				{
 					memcpy(lang_tmp, asld->elements[i].i_iso_639_code, sizeof(lang_tmp));
-					si_add_audio(aud_info, asld->elements[i].i_elementary_pid, afmt_tmp, lang_tmp,audio_type,audio_exten);
+					si_add_audio(aud_info, asld->elements[i].i_elementary_pid, afmt_tmp, lang_tmp,audio_type,audio_exten,-1);
 				}
 			}
 		}

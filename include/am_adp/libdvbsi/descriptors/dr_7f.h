@@ -60,12 +60,36 @@ typedef struct dvbpsi_EXTENTION_ac4_audio_s
 	uint8_t		ac4_toc_flag;
 } dvbpsi_EXTENTION_ac4_audio_t;
 
+typedef struct dvbpsi_EXTENTION_preselection_s
+{
+	uint8_t		preselection_id;
+	uint8_t		audio_rendering_indication;
+	uint8_t		audio_description;
+	uint8_t		spoken_subtitle;
+	uint8_t		dialogue_enhancement;
+	uint8_t		interactivity_enabled;
+	uint8_t		language_code_present;
+	uint8_t		text_label_present;
+	uint8_t		multi_stream_info_present;
+	uint8_t		future_extension;
+	language_code_t		iso_639_language_code;
+	uint8_t		message_id;
+} dvbpsi_EXTENTION_preselection_t;
+
+typedef struct dvbpsi_EXTENTION_audio_preselection_s
+{
+	uint8_t		num_preselections;
+	uint8_t		reserved_zero_future_use;
+	dvbpsi_EXTENTION_preselection_t preselections[32];
+} dvbpsi_EXTENTION_audio_preselection_t;
+
 typedef struct dvbpsi_EXTENTION_dr_s
 {
 	uint8_t   i_extern_des_tag;          /*!< exten des tag */
 	union {
 		dvbpsi_EXTENTION_sup_audio_t sup_audio;
 		dvbpsi_EXTENTION_ac4_audio_t ac4_audio;
+		dvbpsi_EXTENTION_audio_preselection_t audio_preselection;
 	} exten_t;							/*!< exten tag info */
 } dvbpsi_EXTENTION_dr_t;
 
@@ -103,7 +127,7 @@ typedef struct dvbpsi_EXTENTION_dr_s
 #define AM_SI_EXTEN_DESCR_BCI_ANCILLARY				(0x14)
 #define AM_SI_EXTEN_DESCR_AC4						(0x15)
 #define AM_SI_EXTEN_DESCR_C2						(0x16)
-#define AM_DI_EXTEN_DESCR_AUDIO_PRESELECTION        (0x19)
+#define AM_SI_EXTEN_DESCR_AUDIO_PRESELECTION		(0x19)
 #define AM_SI_EXTEN_DESCR_OTHER						(0x20)
 
 /*****************************************************************************
