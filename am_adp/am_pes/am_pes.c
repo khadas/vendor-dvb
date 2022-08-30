@@ -235,48 +235,47 @@ AM_ErrorCode_t AM_PES_Decode(AM_PES_Handle_t handle, uint8_t *buf, int size)
 		}
 		if ((parser->len - pos) < (plen + PES_PAECKET_HEAD_LEN) && invalid == 0)
 		{
+			goto end;
+		}
+
+		if (invalid == 0)
+		{
 			// check is valid pes packet
 			// check ac3 payload is flag is ac3, is not ac3 payload
 			// we need skip
 			int stream_id = parser->buf[pos + PES_START_CODE_LEN] | PESPACKET_STREAMID_MASK;
 			int start_code = 0;
-			/* program_stream_map, private_stream_2 */
-			/* ECM, EMM */
-			/* program_stream_directory, DSMCC_stream */
-			/* ITU-T Rec. H.222.1 type E stream */
-			if (stream_id != PROGRAM_STREAM_MAP && stream_id != PRIVATE_STREAM_2 &&
-				stream_id != ECM_STREAM && stream_id != EMM_STREAM &&
-				stream_id != PROGRAM_STREAM_DIRECTORY && stream_id != DSMCC_STREAM &&
-				stream_id != H222_TYPE_E_STREAM) {
-				/*get pes header len, case have pes header*/
-				pes_header_len = parser->buf[pos + PES_PAECKET_HEAD_LEN + 2];
-				/*pes table skip len*/
-				hlen = PES_PAECKET_HEAD_LEN + PES_PAYLOADINFO_LEN + pes_header_len;
-				if (parser->para.afmt == AFORMAT_AC3 || parser->para.afmt == AFORMAT_EAC3) {
-					start_code = ((uint16_t)parser->buf[pos + hlen] << 8)
-					| parser->buf[pos + hlen + 1];
-					if (start_code != AC3_PAYLOAD_START_CODE_1 && start_code != AC3_PAYLOAD_START_CODE_2) {
+
+			if (stream_id != PADDING_STREAM) {
+				/* program_stream_map, private_stream_2 */
+				/* ECM, EMM */
+				/* program_stream_directory, DSMCC_stream */
+				/* ITU-T Rec. H.222.1 type E stream */
+				if (stream_id != PROGRAM_STREAM_MAP && stream_id != PRIVATE_STREAM_2 &&
+					stream_id != ECM_STREAM && stream_id != EMM_STREAM &&
+					stream_id != PROGRAM_STREAM_DIRECTORY && stream_id != DSMCC_STREAM &&
+					stream_id != H222_TYPE_E_STREAM) {
+					/*get pes header len, case have pes header*/
+					pes_header_len = parser->buf[pos + PES_PAECKET_HEAD_LEN + 2];
+					/*pes table skip len*/
+					hlen = PES_PAECKET_HEAD_LEN + PES_PAYLOADINFO_LEN + pes_header_len;
+				} else {
+					/*payload case*/
+					hlen = PES_PAECKET_HEAD_LEN;
+				}
+
+				if (parser->para.afmt == AFORMAT_AC3
+					|| parser->para.afmt == AFORMAT_EAC3) {
+					start_code =
+						((uint16_t)parser->buf[pos + hlen] << 8) | parser->buf[pos + hlen + 1];
+					if (start_code != AC3_PAYLOAD_START_CODE_1
+						&& start_code != AC3_PAYLOAD_START_CODE_2) {
 						// skip this pes data
 						AM_DEBUG(1, "pes packet skip not ac3 data [0x%x]", start_code);
-						plen = 0;
-						goto skip;
-					}
-				}
-			} else {
-				/*payload case*/
-				hlen = PES_PAECKET_HEAD_LEN;
-				if (parser->para.afmt == AFORMAT_AC3 || parser->para.afmt == AFORMAT_EAC3) {
-					start_code = ((uint16_t)parser->buf[pos + hlen] << 8)
-								| parser->buf[pos + hlen + 1];
-					if (start_code != AC3_PAYLOAD_START_CODE_1 && start_code != AC3_PAYLOAD_START_CODE_2) {
-						// skip this pes data
-						AM_DEBUG(1, "pes packet skip not ac3 data payload [0x%x] ", start_code);
-						plen = 0;
 						goto skip;
 					}
 				}
 			}
-			goto end;
 		}
 
 		if (parser->para.payload_only) {
