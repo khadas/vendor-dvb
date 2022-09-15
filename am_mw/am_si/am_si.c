@@ -1144,8 +1144,9 @@ static void si_add_audio(AM_SI_AudioInfo_t *ai, int aud_pid, int aud_fmt, char l
 	{
 		if (ai->audios[i].pid == aud_pid &&
 			ai->audios[i].fmt == aud_fmt &&
-			ai->audios[i].presel_id == presel_id &&
-			! memcmp(ai->audios[i].lang, lang, 3))
+			((! memcmp(ai->audios[i].lang, lang, 3) && ai->audios[i].presel_id == presel_id)
+			|| (ai->audios[i].presel_id != -1 && presel_id == -1))
+			)
 		{
 			if ((strncmp(ai->audios[i].lang, "Audio", 5) == 0) && lang[0] != 0) {
 				memset(ai->audios[i].lang, 0, sizeof(ai->audios[i].lang));
@@ -2123,7 +2124,6 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 
 	if (afmt_tmp != -1 && afmt_tmp != AFORMAT_DTS)
 	{
-		AM_Bool_t hit = false;
 		AM_SI_LIST_BEGIN(es->p_first_descriptor, descr)
 			if (descr->i_tag == AM_SI_DESCR_ISO639 && descr->p_decoded != NULL)
 			{
@@ -2132,7 +2132,6 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 				{
 					memcpy(lang_tmp, pisod->code[0].iso_639_code, sizeof(lang_tmp));
 					audio_type = pisod->code[0].i_audio_type;
-					hit = true;
 					break;
 				}
 			}
@@ -2149,16 +2148,12 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 					}
 					audio_type = pisod->exten_t.sup_audio.editorial_classification;
 					AM_DEBUG(1, "audio type : %d lang:%s", audio_type, lang_tmp);
-					hit = true;
 					break;
 				}
 			}
 		AM_SI_LIST_END()
-		if (hit)
-		{
-			/* Add a audio */
-			si_add_audio(aud_info, es->i_pid, afmt_tmp, lang_tmp, audio_type, audio_exten, -1);
-		}
+		/* Add a audio */
+		si_add_audio(aud_info, es->i_pid, afmt_tmp, lang_tmp, audio_type, audio_exten, -1);
 	}
 
 	return AM_SUCCESS;
