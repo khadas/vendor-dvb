@@ -410,7 +410,7 @@ static void tt2_cache_page(AM_TT2_Parser_t *parser, int pgno, int sub_pgno)
 static void* tt2_thread(void *arg)
 {
 	AM_TT2_Parser_t               *parser = (AM_TT2_Parser_t*)arg;
-	AM_TT2_CachedPage_t        *target_page;
+	AM_TT2_CachedPage_t        *target_page = NULL;
 	AM_TT2_CachedPage_t        draw_page = {0};
 	char subs[16];
 	int                                     sub_cnt;
@@ -546,6 +546,11 @@ static void tt2_event_handler(vbi_event *ev, void *user_data)
 static void *tt2_vbi_data_thread(void *arg)
 {
 	AM_TT2_Parser_t *parser = (AM_TT2_Parser_t*)arg;
+	// The code below implies a possibility that writing 'vbi' can lead to
+	// overflow. Along this line, some extra space called 'padding' is arranged
+	// beside vbi to keep the overflown data and avoid stack pollution to some
+	// extent.
+	struct vbi_data_s padding[3];
 	struct vbi_data_s vbi;
 	int fd;
 	int type = VBI_TYPE_TT_625B;
@@ -553,6 +558,8 @@ static void *tt2_vbi_data_thread(void *arg)
 	vbi_sliced *s = sliced;
 	int i;
 	int notify_data = 0;
+
+	memset(&padding,0,sizeof(padding));
 //#define FILE_DEBUG
 #ifndef FILE_DEBUG
 	AM_DEBUG(0, "no filedebug");
@@ -585,22 +592,24 @@ static void *tt2_vbi_data_thread(void *arg)
 			pd  = &vbi;
 			AM_DEBUG(4, "am_vbi_data_thread running read data == %d",ret);
 
+			if (ret > (int)sizeof(struct vbi_data_s)) {
+				AM_DEBUG(4, "The amount of read data is more than expectation."
+						" This is unlikely to happen. Redundant data will simply"
+						" be discarded. Data length in bytes: %d", ret);
+			}
 			if (ret >= (int)sizeof(struct vbi_data_s)) {
-				while (ret >= (int)sizeof(struct vbi_data_s)) {
-					//TODO
-					s->line = pd->line_num;
-					s->id = VBI_SLICED_TELETEXT_B;
-					memcpy(s->data, pd->b, 42);
+				//TODO
+				s->line = pd->line_num;
+				s->id = VBI_SLICED_TELETEXT_B;
+				memcpy(s->data, pd->b, 42);
 
-					pthread_mutex_lock(&parser->lock);
-					if (parser->dec)
-						vbi_decode(parser->dec, s, 1, 0);
+				pthread_mutex_lock(&parser->lock);
+				if (parser->dec)
+					vbi_decode(parser->dec, s, 1, 0);
 
-					pthread_mutex_unlock(&parser->lock);
+				pthread_mutex_unlock(&parser->lock);
 
-					pd ++;
-					ret -= sizeof(struct vbi_data_s);
-				}
+				ret -= sizeof(struct vbi_data_s);
 			}
 		}
 	}
@@ -1027,8 +1036,8 @@ AM_ErrorCode_t AM_TT2_Start(AM_TT2_Handle_t handle, int region_id)
 	parser->dec = vbi_decoder_new();
 	if (!parser->dec)
 	{
-		free(parser);
 		parser->dec = NULL;
+		free(parser);
 		return AM_TT2_ERR_CREATE_DECODE;
 	}
 

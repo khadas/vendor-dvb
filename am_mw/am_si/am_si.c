@@ -742,6 +742,7 @@ static AM_ErrorCode_t si_convert_iso6937_to_utf8(const char *src, int src_len, c
 		/* ISO 6937 encoding must start with character between 0x20 and 0xFF
 		 otherwise it is dfferent encoding table
 		 for example 0x05 means encoding table 8859-9 */
+		free(ucs2);
 		return -1;
 	}
 
@@ -1705,7 +1706,7 @@ AM_ErrorCode_t AM_SI_ConvertToUTF8(char *in, int in_len, char *out, int out_len,
 
 AM_ErrorCode_t AM_SI_ConvertDVBTextCodeEx(char *in, int in_len, char *out, int out_len, char *coding)
 {
-	char cod[64] = {0};
+	char cod[65] = {0};
 	int offset = 0;
 
 	if (!coding) {
