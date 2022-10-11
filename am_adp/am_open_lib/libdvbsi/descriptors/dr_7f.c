@@ -90,9 +90,15 @@ int dvbpsi_Decode_Exten_Audio_Preselection_Dr(dvbpsi_EXTENTION_dr_t * p_decoded,
 		return 0;
 	}
 	uint8_t* data = p_data+2;
+	// TV-64939 mentions the use case of multi_stream_info_present.
+	// It requires to skip the audio track which multi_stream_info_present is TRUE.
+	// num_skipped_presel here is used to count number of preselections to be skipped
+	// along this line.
+	int num_skipped_presel = 0;
 	for (int i=0;i<ap->num_preselections;i++)
 	{
-		dvbpsi_EXTENTION_preselection_t* ps_i = &ap->preselections[i];
+		// Considering the skipped preselection item, here is 'i-num_skipped_presel'
+		dvbpsi_EXTENTION_preselection_t* ps_i = &ap->preselections[i-num_skipped_presel];
 		int extra=0;
 		ps_i->preselection_id = (data[0]&0xF8)>>3;
 		ps_i->audio_rendering_indication = (data[0]&0x07);
@@ -115,12 +121,25 @@ int dvbpsi_Decode_Exten_Audio_Preselection_Dr(dvbpsi_EXTENTION_dr_t * p_decoded,
 			ps_i->message_id = data[2+extra];
 			extra+=1;
 		}
+		if (ps_i->multi_stream_info_present)
+		{
+			int num_aux_components = data[2+extra]>>5;
+			extra+=num_aux_components+1;
+			num_skipped_presel++;
+		}
+		if (ps_i->future_extension)
+		{
+			int future_extension_length = data[2+extra];
+			extra+=future_extension_length+1;
+		}
 		AM_DEBUG(1, "dr_7f data:%p, preselection id:%d, lang:%c%c%c, msg_id:%d",
 				data,(int)(ps_i->preselection_id),
 				ps_i->iso_639_language_code[0], ps_i->iso_639_language_code[1],
 				ps_i->iso_639_language_code[2], (int)(ps_i->message_id));
 		data += (2+extra);
 	}
+	// num_preselections needs to be revised
+	ap->num_preselections -= num_skipped_presel;
 	return 0;
 }
 
