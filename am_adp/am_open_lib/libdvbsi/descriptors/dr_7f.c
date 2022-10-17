@@ -143,6 +143,22 @@ int dvbpsi_Decode_Exten_Audio_Preselection_Dr(dvbpsi_EXTENTION_dr_t * p_decoded,
 	return 0;
 }
 
+int dvbpsi_Decode_Exten_Message_Dr(dvbpsi_EXTENTION_dr_t * p_decoded, uint8_t * p_data, uint8_t i_length)
+{
+	AM_DEBUG(1, "dr_7f %s", __func__);
+	dvbpsi_EXTENTION_message_t* ap = &p_decoded->exten_t.message;
+	ap->message_id = p_data[1];
+	strncpy(ap->iso_639_language_code,p_data+2,3);
+	int text_len = i_length-5;
+	memset(ap->text,0,sizeof(ap->text));
+	strncpy(ap->text,p_data+5,text_len);
+	uint8_t* lang = ap->iso_639_language_code;
+	AM_DEBUG(1, "dr_7f %s, msg_id:%d, lang:%c%c%c, text:%s.", __func__,
+			ap->message_id,lang[0],lang[1],lang[2],ap->text);
+
+	return 0;
+}
+
 /*****************************************************************************
  * dvbpsi_DecodeEXTENTIONDr
  *****************************************************************************/
@@ -204,6 +220,7 @@ dvbpsi_EXTENTION_dr_t * dvbpsi_DecodeEXTENTIONDr(dvbpsi_descriptor_t * p_descrip
       break;
     case AM_SI_EXTEN_DESCR_MESSAGE:
       AM_DEBUG(1, "dr_7f exten tag AM_SI_EXTEN_DESCR_MESSAGE ");
+      dvbpsi_Decode_Exten_Message_Dr(p_decoded, p_descriptor->p_data, p_descriptor->i_length);
       break;
     case AM_SI_EXTEN_DESCR_TARGET_REGION:
       AM_DEBUG(1, "dr_7f exten tag AM_SI_EXTEN_DESCR_TARGET_REGION ");

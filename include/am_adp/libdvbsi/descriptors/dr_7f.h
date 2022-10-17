@@ -83,6 +83,13 @@ typedef struct dvbpsi_EXTENTION_audio_preselection_s
 	dvbpsi_EXTENTION_preselection_t preselections[32];
 } dvbpsi_EXTENTION_audio_preselection_t;
 
+typedef struct dvbpsi_EXTENTION_message_s
+{
+	uint8_t		message_id;
+	language_code_t		iso_639_language_code;
+	uint8_t		text[249];
+} dvbpsi_EXTENTION_message_t;
+
 typedef struct dvbpsi_EXTENTION_dr_s
 {
 	uint8_t   i_extern_des_tag;          /*!< exten des tag */
@@ -90,6 +97,7 @@ typedef struct dvbpsi_EXTENTION_dr_s
 		dvbpsi_EXTENTION_sup_audio_t sup_audio;
 		dvbpsi_EXTENTION_ac4_audio_t ac4_audio;
 		dvbpsi_EXTENTION_audio_preselection_t audio_preselection;
+		dvbpsi_EXTENTION_message_t message;
 	} exten_t;							/*!< exten tag info */
 } dvbpsi_EXTENTION_dr_t;
 
