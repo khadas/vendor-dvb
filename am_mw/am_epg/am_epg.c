@@ -590,9 +590,13 @@ static void format_audio_strings(AM_SI_AudioInfo_t *ai, char *pids, char *fmts, 
 		}
 		else
 		{
-			snprintf(pids, 256, "%s %d", pids, ai->audios[i].pid);
-			snprintf(fmts, 256, "%s %d", fmts, ai->audios[i].fmt);
-			snprintf(langs, 256, "%s %s", langs, ai->audios[i].lang);
+			int len = 0;
+			len = strlen(pids);
+			snprintf(pids+len, 256-len, " %d", ai->audios[i].pid);
+			len = strlen(fmts);
+			snprintf(fmts+len, 256-len, " %d", ai->audios[i].fmt);
+			len = strlen(langs);
+			snprintf(langs+len, 256-len, " %s", ai->audios[i].lang);
 		}
 	}
 }

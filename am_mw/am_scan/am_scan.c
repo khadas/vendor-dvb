@@ -573,11 +573,17 @@ static void format_audio_strings(AM_SI_AudioInfo_t *ai, char *pids, char *fmts, 
 		}
 		else
 		{
-			snprintf(pids, 256, "%s %d", pids, ai->audios[i].pid);
-			snprintf(fmts, 256, "%s %d", fmts, ai->audios[i].fmt);
-			snprintf(langs, 256, "%s %s", langs, ai->audios[i].lang);
-			snprintf(audio_type, 256, "%s %d",audio_type,ai->audios[i].audio_type);
-			snprintf(audio_exten, 256, "%s %d",audio_exten,ai->audios[i].audio_exten);
+			int len = 0;
+			len = strlen(pids);
+			snprintf(pids+len, 256-len, " %d", ai->audios[i].pid);
+			len = strlen(fmts);
+			snprintf(fmts+len, 256-len, " %d", ai->audios[i].fmt);
+			len = strlen(langs);
+			snprintf(langs+len, 256-len, " %s", ai->audios[i].lang);
+			len = strlen(audio_type);
+			snprintf(audio_type+len, 256-len, " %d",ai->audios[i].audio_type);
+			len = strlen(audio_exten);
+			snprintf(audio_exten+len, 256-len, " %d",ai->audios[i].audio_exten);
 			//AM_DEBUG(1, "@@ exten=[0x%x][%d]@@",ai->audios[i].audio_exten,ai->audios[i].audio_exten);
 		}
 	}
@@ -607,11 +613,17 @@ static void format_subtitle_strings(AM_SI_SubtitleInfo_t *si, char *pids, char *
 		}
 		else
 		{
-			snprintf(pids, 256,  "%s %d", pids, si->subtitles[i].pid);
-			snprintf(types, 256, "%s %d", types, si->subtitles[i].type);
-			snprintf(cids, 256,  "%s %d", cids, si->subtitles[i].comp_page_id);
-			snprintf(aids, 256,  "%s %d", aids, si->subtitles[i].anci_page_id);
-			snprintf(langs, 256, "%s %s", langs, si->subtitles[i].lang);
+			int len = 0;
+			len = strlen(pids);
+			snprintf(pids+len, 256-len, " %d", si->subtitles[i].pid);
+			len = strlen(types);
+			snprintf(types+len, 256-len, " %d", si->subtitles[i].type);
+			len = strlen(cids);
+			snprintf(cids+len, 256-len, " %d", si->subtitles[i].comp_page_id);
+			len = strlen(aids);
+			snprintf(aids+len, 256-len, " %d", si->subtitles[i].anci_page_id);
+			len = strlen(langs);
+			snprintf(langs+len, 256-len, " %s", si->subtitles[i].lang);
 		}
 	}
 }
@@ -640,11 +652,17 @@ static void format_teletext_strings(AM_SI_TeletextInfo_t *ti, char *pids, char *
 		}
 		else
 		{
-			snprintf(pids, 256,   "%s %d", pids, ti->teletexts[i].pid);
-			snprintf(types, 256,  "%s %d", types, ti->teletexts[i].type);
-			snprintf(magnos, 256, "%s %d", magnos, ti->teletexts[i].magazine_no);
-			snprintf(pgnos, 256,  "%s %d", pgnos, ti->teletexts[i].page_no);
-			snprintf(langs, 256,  "%s %s", langs, ti->teletexts[i].lang);
+			int len = 0;
+			len = strlen(pids);
+			snprintf(pids+len, 256-len, " %d", ti->teletexts[i].pid);
+			len = strlen(types);
+			snprintf(types+len, 256-len, " %d", ti->teletexts[i].type);
+			len = strlen(magnos);
+			snprintf(magnos+len, 256-len, " %d", ti->teletexts[i].magazine_no);
+			len = strlen(pgnos);
+			snprintf(pgnos+len, 256-len, " %d", ti->teletexts[i].page_no);
+			len = strlen(langs);
+			snprintf(langs+len, 256-len, " %s", ti->teletexts[i].lang);
 		}
 	}
 }
@@ -1321,16 +1339,15 @@ static void am_scan_extract_srv_info_from_sdt(AM_SCAN_Result_t *result, dvbpsi_s
 
 				if (psd->i_service_name_length > 0)
 				{
-					name[0] = 0;
-					AM_SI_ConvertDVBTextCode((char*)psd->i_service_name, psd->i_service_name_length,\
-								name, AM_DB_MAX_SRV_NAME_LEN);
-					name[AM_DB_MAX_SRV_NAME_LEN] = 0;
+					memset(name,0,sizeof(name));
+					AM_SI_ConvertDVBTextCode((char*)psd->i_service_name,
+							psd->i_service_name_length, name, AM_DB_MAX_SRV_NAME_LEN);
 
 					/*3bytes language code, using xxx to simulate*/
-					COPY_NAME("xxx", 3);
+					memcpy(srv_info->name, "xxx", 3);
 					/*following by name text*/
-					tmp_len = strlen(name);
-					COPY_NAME(name, tmp_len);
+					strncpy(srv_info->name+3, name, AM_DB_MAX_SRV_NAME_LEN);
+					curr_name_len = strlen(srv_info->name);
 				}
 				/*业务类型*/
 				srv_info->srv_type = psd->i_service_type;
@@ -3515,25 +3532,25 @@ static AM_SCAN_TableCtl_t *am_scan_get_section_ctrl_by_fid(AM_SCAN_Scanner_t *sc
 /**\brief 从一个CVCT中添加虚拟频道*/
 static void am_scan_add_vc_from_vct(AM_SCAN_Scanner_t *scanner, vct_section_info_t *vct)
 {
-	vct_channel_info_t *tmp, *new;
+	vct_channel_info_t *tmp, *tmp2, *newone;
 	AM_Bool_t found;
 
 	AM_SI_LIST_BEGIN(vct->vct_chan_info, tmp)
-		new = (vct_channel_info_t *)malloc(sizeof(vct_channel_info_t));
-		if (new == NULL)
+		newone = (vct_channel_info_t *)malloc(sizeof(vct_channel_info_t));
+		if (newone == NULL)
 		{
 			AM_DEBUG(1, "Error, no enough memory for adding a new VC");
 			continue;
 		}
 		/*here we share the desc pointer*/
-		*new = *tmp;
-		new->p_next = NULL;
+		*newone = *tmp;
+		newone->p_next = NULL;
 
 		found = AM_FALSE;
 		/*Is this vc already added?*/
-		AM_SI_LIST_BEGIN(scanner->result.vcs, tmp)
-			if (tmp->channel_TSID == new->channel_TSID &&
-				tmp->program_number == new->program_number)
+		AM_SI_LIST_BEGIN(scanner->result.vcs, tmp2)
+			if (tmp2->channel_TSID == newone->channel_TSID &&
+				tmp2->program_number == newone->program_number)
 			{
 				found = AM_TRUE;
 				break;
@@ -3543,8 +3560,9 @@ static void am_scan_add_vc_from_vct(AM_SCAN_Scanner_t *scanner, vct_section_info
 		if (! found)
 		{
 			/*Add this vc to result.vcs*/
-			ADD_TO_LIST(new, scanner->result.vcs);
+			ADD_TO_LIST(newone, scanner->result.vcs);
 		}
+		free(newone);
 	AM_SI_LIST_END()
 }
 
@@ -5757,6 +5775,7 @@ static void am_scan_copy_dtv_feparas(AM_SCAN_DTVCreatePara_t *para, AM_Bool_t us
 		&& use_default )
 	{
 		struct dvb_frontend_parameters tpara;
+		memset(&tpara,0,sizeof(tpara));
 
 		/* User not specify the fe_paras, using default */
 		if (para->source == FE_QAM)
