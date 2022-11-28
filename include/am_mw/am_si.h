@@ -150,6 +150,7 @@ extern "C"
 #define AM_SI_DESCR_PDC						(0x69)
 #define AM_SI_DESCR_AC3						(0x6A)
 #define AM_SI_DESCR_ENHANCED_AC3			(0x7A)
+#define AM_SI_DESCR_AAC						(0x7C)
 #define AM_SI_DESCR_PSIPENHANCED_AC3		(0xCC)
 #define AM_SI_DESCR_PSIP_AUDIOSTREAM_AC3	(0x81)
 #define AM_SI_DESCR_DTS						(0x7B)

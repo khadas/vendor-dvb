@@ -674,6 +674,7 @@ void si_decode_descriptor_ex(dvbpsi_descriptor_t *descr, SI_Descriptor_Flag_t fl
 		SI_ADD_DESCR_DECODE_FUNC(AM_SI_DESCR_LCN_88, 			dvbpsi_DecodeLogicalChannelNumber88Dr)
 		SI_ADD_DESCR_DECODE_FUNC(AM_SI_DESCR_AC3, 			dvbpsi_DecodeAC3Dr)
 		SI_ADD_DESCR_DECODE_FUNC(AM_SI_DESCR_ENHANCED_AC3, 	dvbpsi_DecodeENAC3Dr)
+		SI_ADD_DESCR_DECODE_FUNC(AM_SI_DESCR_AAC,			dvbpsi_DecodeAACDr)
 		SI_ADD_DESCR_DECODE_FUNC(AM_SI_DESCR_PSIPENHANCED_AC3, 	dvbpsi_DecodePSIPENAC3Dr)
 		SI_ADD_DESCR_DECODE_FUNC(AM_SI_DESCR_PSIP_AUDIOSTREAM_AC3, 	dvbpsi_decode_atsc_ac3_audio_dr)
 		SI_ADD_DESCR_DECODE_FUNC(AM_SI_DESCR_EXTENSION, 	dvbpsi_DecodeEXTENTIONDr)

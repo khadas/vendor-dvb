@@ -74,6 +74,7 @@
 #include "dr_5d.h"
 #include "dr_6a.h"
 #include "dr_7a.h"
+#include "dr_7c.h"
 #include "dr_7f.h"
 #include "dr_a1.h"
 #include "dr_cc.h"
