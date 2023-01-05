@@ -8145,6 +8145,7 @@ static int aml_restart_inject_mode(AM_AV_Device_t *dev, AM_Bool_t destroy_thread
 	dev->inject_player.drv_data = inj;
 	///replace the inject data
 
+	memset(&inj_data,0,sizeof(inj_data));
 	inj_data.para.aud_fmt = pre_inject_data.aud_fmt;
 	inj_data.para.aud_id = pre_inject_data.aud_id;
 	inj_data.para.pkg_fmt = pre_inject_data.pkg_fmt;

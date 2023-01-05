@@ -396,6 +396,9 @@ static void* fend_blindscan_thread(void *arg)
 	unsigned short index = 0;
 	enum AM_FEND_DVBSx_BlindScanAPI_Status BS_Status = DVBSx_BS_Status_Init;
 
+	memset(&evt,0,sizeof(evt));
+	memset(&cur_bsevent,0,sizeof(cur_bsevent));
+
 	ret = fend_get_openned_dev(dev_no, &dev);
 	if (ret != AM_SUCCESS)
 		return NULL;

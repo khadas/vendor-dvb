@@ -468,7 +468,7 @@ static void am_korea_show_caption()
 		if(cur_line_cnt > MAX_LINE)
 		{
 			int delete_line_cnt = cur_line_cnt - MAX_LINE;
-			int temp_data_array[512];
+			int temp_data_array[512] = {0};
 			temp_line_cnt = 0;
 			for(idx = 0; idx < temp_cc1_char_idx;)
 			{
@@ -1528,7 +1528,8 @@ void am_parse_atsc_cc_command(char *buffer, int cnt)
 			case 0x92:
 				CC_DECODE_DBG( "--------row:%d, column:%d, last_text_row:%d",buffer[idx+1], buffer[idx+2], last_text_row);
 				{
-					int font_row, font_col, font_color, crc_sum;
+					int font_row, font_col, crc_sum;
+					int font_color=0;
 					font_row = buffer[idx+1]&0xF;
 					font_row%=16;
 					font_col = buffer[idx+2]&0x3F;

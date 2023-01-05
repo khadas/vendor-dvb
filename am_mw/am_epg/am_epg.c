@@ -1977,6 +1977,7 @@ static void am_epg_section_handler(int dev_no, int fid, const uint8_t *data, int
 	AM_EPG_TableCtl_t * sec_ctrl;
 	AM_SI_SectionHeader_t header;
 
+	memset(&header,0,sizeof(header));
 	UNUSED(dev_no);
 
 	if (mon == NULL)

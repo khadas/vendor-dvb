@@ -1703,6 +1703,7 @@ static void xds_handle_lentimestate(UINT8 data,AM_XDSContext_t *context)
 	AM_XDSInfo_t 	*info = (AM_XDSInfo_t *) NULL;
 	UINT32  	x;
 	
+	memset(&temp,0,sizeof(temp));
 	info = context->XDSBuffer;
 	context->lenParamCount++;
 
@@ -4388,7 +4389,8 @@ static AM_ErrorCode_t xds_update_evt_table_items(sqlite3 *sqldb,AM_xdsUserProcEv
    int starttime,endtime,now = 0;
    char rrt_rating[256];
    AM_XDSInfo_t lastXdsInfo;
-   char progname[256],aud_langs[256];
+   char progname[256]={0};
+   char aud_langs[256]={0};
    int eit_schedule_flag=0,eit_pf_flag =0,i;
 
    AM_XDS_DBG("\n[%s:%d]--->event: 0x%x :source_id :%d,evt_dbid :%d\n",__FUNCTION__,__LINE__,event,source_id,evt_dbid);

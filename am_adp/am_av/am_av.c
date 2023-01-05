@@ -577,6 +577,7 @@ AM_ErrorCode_t AM_AV_StartTSWithPCR(int dev_no, uint16_t vpid, uint16_t apid, ui
 
 	pthread_mutex_lock(&dev->lock);
 
+	memset(&para,0,sizeof(para));
 	para.vpid = vpid;
 	para.vfmt = vfmt;
 	para.apid = apid;

@@ -431,7 +431,7 @@ static void en50221_sl_handle_open_session_request(struct en50221_session_layer 
 	int status = S_STATUS_CLOSE_NO_RES;
 	en50221_sl_resource_callback resource_callback = NULL;
 	void *resource_arg = NULL;
-	uint32_t connected_resource_id;
+	uint32_t connected_resource_id = 0;
 	if (lcb) {
 		status =
 		    lcb(lcb_arg, slot_id, requested_resource_id,

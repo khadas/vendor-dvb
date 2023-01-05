@@ -2461,6 +2461,7 @@ void AM_SEC_SetCommandString(int dev_no, const char *str)
 
 	eSecCommand_t sec_cmd;
 	eDVBDiseqcCommand_t diseqc_cmd;
+	memset(&diseqc_cmd,0,sizeof(diseqc_cmd));
 	
 	if (!str)
 		return;
