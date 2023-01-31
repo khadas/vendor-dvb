@@ -1,4 +1,5 @@
 OUTPUT = libam_mw.so
+OUTPUT2 = libam_mw.a
 DEFINES = -DLINUX_DVB_FEND -DLOG_LEVEL=1 -DLIBICONV_PLUG
 USING_LIBS =
 USING_LIBS_PATH = $(ROOT_DIR)/am_adp
@@ -37,12 +38,12 @@ SRC_FILES = $(wildcard am_db/*.c\
            am_check_scramb/*.c)
 
 CFLAGS   := -c -Wall -shared -fPIC -Wno-unknown-pragmas -Wno-format -O3 -fexceptions -fnon-call-exceptions
-
+CFLAGS += -DNO_AM_AV
 CFLAGS += $(LOCAL_C_INCLUDES) $(DEFINES) -Wno-error=format-security
 LDFLAGS  := -shared -fPIC -L$(USING_LIBS_PATH) -L$(INSTALL_DIR) -lzvbi -lam_adp -lsqlite3
 LDFLAGS += -L${STAGING_DIR}/usr/lib
 
-all : $(OBJS) $(OUTPUT)
+all : $(OBJS) $(OUTPUT) $(OUTPUT2)
 
 $(OBJS) : %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -50,8 +51,11 @@ $(OBJS) : %.o : %.c
 $(OUTPUT) : $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
+$(OUTPUT2): $(OBJS)
+	$(AR) rcs $@ $^
+
 install:
 	-install -m 555 ${OUTPUT} $(INSTALL_DIR)
 
 clean:
-	@rm -f $(OBJS)
+	@rm -f $(OBJS) $(OUTPUT) $(OUTPUT2)

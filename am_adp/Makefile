@@ -1,4 +1,5 @@
 OUTPUT = libam_adp.so
+OUTPUT2 = libam_adp.a
 DEFINES = -DLINUX_DVB_FEND -DLOG_LEVEL=1
 USING_LIBS =
 USING_LIBS_PATH =
@@ -42,17 +43,20 @@ SRC_FILES = $(wildcard am_dmx/*.c am_dmx/linux_dvb/*.c \
 		    am_tfile/am_tfile.c)
 
 CFLAGS   := -c -Wall -shared -fPIC -Wno-unknown-pragmas -Wno-format -O3 -fexceptions -fnon-call-exceptions -DCHIP_8226M
-
+CFLAGS += -DNO_AM_AV
 CFLAGS += $(LOCAL_C_INCLUDES) $(DEFINES) -Wno-error=format-security
 LDFLAGS  := -shared -fPIC -L$(TARGET_DIR)/usr/lib
 
-all : $(OBJS) $(OUTPUT)
+all : $(OBJS) $(OUTPUT) $(OUTPUT2)
 
 $(OBJS) : %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OUTPUT) : $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(USING_LIBS_PATH) $(USING_LIBS)
+
+$(OUTPUT2) : $(OBJS)
+	$(AR) rcs $@ $^
 
 install:
 	-install -m 555 ${OUTPUT} $(TARGET_DIR)/usr/lib/
@@ -61,4 +65,4 @@ install:
 	-cp -ar $(LOCAL_PATH)/../android/ndk/include/linux/dvb/*.h $(STAGING_DIR)/usr/include/linux/dvb/
 
 clean:
-	@rm -f $(OBJS)
+	@rm -f $(OBJS) $(OUTPUT) $(OUTPUT2)
