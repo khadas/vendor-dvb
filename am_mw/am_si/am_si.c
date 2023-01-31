@@ -2089,12 +2089,15 @@ AM_ErrorCode_t AM_SI_ExtractAVFromES(dvbpsi_pmt_es_t *es, int *vid, int *vfmt, A
 		AM_DEBUG(1, "Set video format to %d", vfmt_tmp);
 		*vfmt = vfmt_tmp;
 	}
-
+#ifdef ANDROID
 	ret = property_get("ro.vendor.platform.digitaltv.ms12_version", buf, NULL);
 	if (ret > 0) {
 		if (strncasecmp(buf, "v1", 2) == 0)
 			ac4_enable = AM_FALSE;
 	}
+#else
+	ac4_enable = AM_FALSE;
+#endif
 	//AM_DEBUG(1, "set ac4_enable = %d\n", ac4_enable);
 
 	if (afmt_tmp == -1 && ac4_enable) {
