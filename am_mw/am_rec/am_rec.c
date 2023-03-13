@@ -683,7 +683,9 @@ static void *am_rec_record_thread(void* arg)
 			}
 			else
 			{
+#ifndef NO_AM_AV
 				if (AM_AV_TimeshiftFillData(0, pdata, ldata) != AM_SUCCESS)
+#endif
 				{
 					err = AM_REC_ERR_CANNOT_WRITE_FILE;
 					break;
