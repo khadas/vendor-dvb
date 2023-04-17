@@ -105,6 +105,7 @@ LOCAL_SRC_FILES := am_dmx/am_dmx.c am_dmx/linux_dvb/linux_dvb.c\
 		   am_open_lib/libdvbsi/descriptors/dr_5d.c\
 		   am_open_lib/libdvbsi/descriptors/dr_6a.c\
 		   am_open_lib/libdvbsi/descriptors/dr_7a.c\
+		   am_open_lib/libdvbsi/descriptors/dr_7c.c\
 		   am_open_lib/libdvbsi/descriptors/dr_7f.c\
 		   am_open_lib/libdvbsi/descriptors/dr_a1.c\
 		   am_open_lib/libdvbsi/descriptors/dr_cc.c\
@@ -280,6 +281,7 @@ LOCAL_SRC_FILES := am_dmx/am_dmx.c am_dmx/linux_dvb/linux_dvb.c\
 		   am_open_lib/libdvbsi/descriptors/dr_5d.c\
 		   am_open_lib/libdvbsi/descriptors/dr_6a.c\
 		   am_open_lib/libdvbsi/descriptors/dr_7a.c\
+		   am_open_lib/libdvbsi/descriptors/dr_7c.c\
 		   am_open_lib/libdvbsi/descriptors/dr_7f.c\
 		   am_open_lib/libdvbsi/descriptors/dr_a1.c\
 		   am_open_lib/libdvbsi/descriptors/dr_cc.c\
@@ -451,6 +453,7 @@ LOCAL_SRC_FILES := am_dmx/am_dmx.c am_dmx/linux_dvb/linux_dvb.c\
 		   am_open_lib/libdvbsi/descriptors/dr_5d.c\
 		   am_open_lib/libdvbsi/descriptors/dr_6a.c\
 		   am_open_lib/libdvbsi/descriptors/dr_7a.c\
+		   am_open_lib/libdvbsi/descriptors/dr_7c.c\
 		   am_open_lib/libdvbsi/descriptors/dr_7f.c\
 		   am_open_lib/libdvbsi/descriptors/dr_a1.c\
 		   am_open_lib/libdvbsi/descriptors/dr_cc.c\
@@ -606,6 +609,7 @@ LOCAL_SRC_FILES := am_dmx/am_dmx.c am_dmx/linux_dvb/linux_dvb.c\
 		   am_open_lib/libdvbsi/descriptors/dr_5d.c\
 		   am_open_lib/libdvbsi/descriptors/dr_6a.c\
 		   am_open_lib/libdvbsi/descriptors/dr_7a.c\
+		   am_open_lib/libdvbsi/descriptors/dr_7c.c\
 		   am_open_lib/libdvbsi/descriptors/dr_7f.c\
 		   am_open_lib/libdvbsi/descriptors/dr_a1.c\
 		   am_open_lib/libdvbsi/descriptors/dr_cc.c\
