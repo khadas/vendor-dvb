@@ -485,6 +485,48 @@ AM_ErrorCode_t AM_VLFEND_GetAFC(int dev_no, int *afc)
 	return ret;
 }
 
+AM_ErrorCode_t AM_VLFEND_EnableAFC(int dev_no, int enable)
+{
+	AM_ErrorCode_t ret = AM_SUCCESS;
+	struct dtv_properties props;
+	struct dtv_property prop;
+
+	memset(&props, 0, sizeof(props));
+	memset(&prop, 0, sizeof(prop));
+
+	prop.cmd = V4L2_ENABLE_AFC;
+	prop.u.data = enable;
+
+	props.num = 1;
+	props.props = &prop;
+
+	return AM_VLFEND_SetProp(dev_no, &props);
+}
+
+AM_ErrorCode_t AM_VLFEND_AFCState(int dev_no, int *state)
+{
+	AM_ErrorCode_t ret = AM_SUCCESS;
+	struct dtv_properties props;
+	struct dtv_property prop;
+
+	assert(state);
+
+	memset(&props, 0, sizeof(props));
+	memset(&prop, 0, sizeof(prop));
+
+	prop.cmd = V4L2_AFC_STATE;
+	prop.u.data = 0;
+
+	props.num = 1;
+	props.props = &prop;
+
+	ret = AM_VLFEND_GetProp(dev_no, &props);
+
+	*state = prop.u.data;
+
+	return ret;
+}
+
 AM_ErrorCode_t AM_VLFEND_GetSoundSystem(int dev_no, int *sys)
 {
 	AM_ErrorCode_t ret = AM_SUCCESS;
