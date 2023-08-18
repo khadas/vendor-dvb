@@ -83,7 +83,7 @@ endif
 ifeq ($(BOARD_VNDK_VERSION), current)
 ifeq ($(BOARD_COMPILE_IN_SYSTEM), true)
     LOCAL_C_INCLUDES += external/icu/icu4c/source/common
-    LOCAL_SHARED_LIBRARIES+= libzvbi libsqlite libam_adp $(AMADEC_LIBS) liblog libdl libc libcutils
+    LOCAL_SHARED_LIBRARIES+= libzvbi libsqlite libam_adp $(AMADEC_LIBS) libicuuc liblog libdl libc libcutils
 else
     LOCAL_CFLAGS += -DUSE_VENDOR_ICU
     ifeq ($(shell test $(PLATFORM_SDK_VERSION) -eq 29&& echo OK),OK)
@@ -92,11 +92,11 @@ else
 	  LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../icu/icu4c/source/common
     endif
     LOCAL_STATIC_LIBRARIES+= libsqlite
-    LOCAL_SHARED_LIBRARIES+= libzvbi libam_adp $(AMADEC_LIBS) liblog libdl libc libcutils
+    LOCAL_SHARED_LIBRARIES+= libzvbi libam_adp $(AMADEC_LIBS) libicuuc_vendor liblog libdl libc libcutils
 endif
 else
 LOCAL_C_INCLUDES += external/icu/icu4c/source/common
-LOCAL_SHARED_LIBRARIES+= libzvbi libsqlite libam_adp $(AMADEC_LIBS) liblog libdl libc libcutils
+LOCAL_SHARED_LIBRARIES+= libzvbi libsqlite libam_adp $(AMADEC_LIBS) libicuuc liblog libdl libc libcutils
 endif
 
 LOCAL_PRELINK_MODULE := false
